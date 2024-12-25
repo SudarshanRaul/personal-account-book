@@ -62,7 +62,7 @@ const AddTransactions = () => {
             {transactions.map((txn, index) => (
                 <div key={index} className="txn-row">
                     <input type="date" value={txn.date} onChange={(e) => updateTransaction(index, "date", e.target.value)} />
-                    <input type="number" value={txn.amount} onChange={(e) => updateTransaction(index, "amount", e.target.value)}  />
+                    <input type="number" step="0.01" value={txn.amount} onChange={(e) => updateTransaction(index, "amount", e.target.value)}  />
                     <select value={txn.category} onChange={(e) => updateTransaction(index, "category", e.target.value)}>
                         {categories && categories.map(({ id, name }, index) => (
                             <option key={index} value={id}>{name}</option>

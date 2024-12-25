@@ -75,6 +75,7 @@ const AccountDashboard = () => {
                     type="number"
                     placeholder="Current Balance"
                     name="currentBalance"
+                    step="0.01"
                     value={newAccount.balance}
                     onChange={handleInputChange}
                 />
