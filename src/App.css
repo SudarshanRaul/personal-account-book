@@ -170,3 +170,12 @@ select {
 .txn-container .txn-row select {
   margin: 2px;
 }
+
+.add-receipt-form input,
+.add-receipt-form select {
+  margin: 0px;
+}
+
+.add-receipt-form img {
+  width: 200px;
+}

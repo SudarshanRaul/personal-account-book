@@ -41,15 +41,28 @@ const addReceipt = async ({
   }
 };
 
+const formatDate = (date) => {
+  // Format date as YYYY-MM-DD
+  return date.toISOString().split("T")[0];
+};
+
 const AddReceipt = () => {
-  const [date, setDate] = useState(new Date());
-  const [accountId, setAccountId] = useState(1);
-  const [amount, setAmount] = useState(100);
-  const [categoryId, setCategoryId] = useState(1);
+  const [date, setDate] = useState(formatDate(new Date()));
+  const [accountId, setAccountId] = useState();
+  const [amount, setAmount] = useState();
+  const [categoryId, setCategoryId] = useState();
   const [receipt, setReceipt] = useState(null);
 
   const categories = useLiveQuery(() => db.categories.toArray(), []);
   const accounts = useLiveQuery(() => db.accounts.toArray(), []);
+
+  const resetForm = () => {
+    setDate(formatDate(new Date()));
+    setAccountId();
+    setAmount();
+    setCategoryId();
+    setReceipt(null);
+  };
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -62,12 +75,13 @@ const AddReceipt = () => {
 
     if (file) {
       reader.readAsDataURL(file);
+      resetForm();
     }
   };
 
-  const saveReceipt = (event) => {
+  const saveReceipt = async (event) => {
     event.preventDefault();
-    addReceipt({
+    const result = await addReceipt({
       date: date,
       accountId: accountId,
       amount: amount,
@@ -77,11 +91,14 @@ const AddReceipt = () => {
         (account) => `${account.id}` === `${accountId}`,
       ).currentBalance,
     });
+    if (result) {
+      alert(`Receipt ${result} added successfully`);
+    }
   };
 
   return (
     <div>
-      <form>
+      <form className="add-receipt-form">
         <div className="grid-col-1fr-3fr padding-10">
           <label>Date:</label>
           <input
@@ -96,6 +113,9 @@ const AddReceipt = () => {
             value={accountId}
             onChange={(e) => setAccountId(e.target.value)}
           >
+            <option key="-1" value="">
+              Select Account
+            </option>
             {accounts &&
               accounts.map(({ id, name }, index) => (
                 <option key={index} value={id}>
@@ -119,6 +139,9 @@ const AddReceipt = () => {
             value={categoryId}
             onChange={(e) => setCategoryId(e.target.value)}
           >
+            <option key="-1" value="">
+              Select Category
+            </option>
             {categories &&
               categories.map(({ id, name }, index) => (
                 <option key={index} value={id}>
