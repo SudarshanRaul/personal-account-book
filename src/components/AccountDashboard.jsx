@@ -90,7 +90,7 @@ const AccountDashboard = () => {
           placeholder="Current Balance"
           name="currentBalance"
           step="0.01"
-          value={newAccount.balance}
+          value={newAccount.currentBalance}
           onChange={handleInputChange}
         />
         <button type="submit">Add Account</button>
