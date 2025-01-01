@@ -17,7 +17,7 @@ const newVersion = incrementVersion(currentVersion); // You can implement your o
 packageJson.version = newVersion;
 
 // Update the build date
-const buildDate = new Date().toISOString();
+const buildDate = new Date().toDateString() + ' ' + new Date().toLocaleTimeString();
 packageJson.buildDate = buildDate;
 
 // Write the updated package.json file
