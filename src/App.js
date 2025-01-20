@@ -4,7 +4,7 @@ import Transactions from "./components/Transactions";
 import Summary from "./components/Summary";
 import AddReceipt from "./components/AddReceipt";
 import Categories from "./components/Categories";
-// import Header from './components/Header';
+import ReceiptList from "./components/ReceiptList";
 import Tab from "./components/Tab";
 import AddTransactions from "./components/AddTransactions";
 import Package from "../package.json";
@@ -21,7 +21,7 @@ const TabContents = [
 function App() {
   return (
     <div className="App">
-      <div className="text-center">Version {Package.version} {Package.buildDate}</div>
+      <div className="text-center version">Version {Package.version} {Package.buildDate}</div>
       <Tab contents={TabContents} />
     </div>
   );
