@@ -31,6 +31,10 @@ select {
   border-radius: 5px;
 }
 
+.version {
+  margin: 10px auto;
+}
+
 .tab-header select,
 .tab-header select:hover,
 .tab-header select:focus,
@@ -41,6 +45,38 @@ select {
   padding: 10px;
   font-size: 20px;
   font-weight: bold;
+}
+
+.tab-list-wrapper {
+  overflow: auto;
+  padding: 10px;
+}
+
+.tab-list {
+  display: flex;
+  gap: 10px;
+  width: fit-content;
+}
+
+.tab-list li {
+  list-style: none;
+  width: fit-content;
+  display: inline;
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+  border-radius: 15px;
+}
+
+.tab-list li.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.tab-list li:after {
+  display: block;
+  content: attr(data-content);
+  height: 0;
+  overflow: hidden;
 }
 
 .bg-color-000 {
@@ -134,10 +170,6 @@ select {
   border-bottom: 1px solid #ccc;
 }
 
-.text-center {
-  text-align: center;
-}
-
 .font-size-28 {
   font-size: 28px;
 }
@@ -178,4 +210,10 @@ select {
 
 .add-receipt-form img {
   width: 200px;
+}
+
+.inline-img {
+  width: 100px;
+  height: 100px;
+  vertical-align: middle;
 }

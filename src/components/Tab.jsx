@@ -10,6 +10,21 @@ const Tab = ({ contents }) => {
   return (
     <div className="tab-container">
       <div className="text-center tab-header">
+        <div className="tab-list-wrapper">
+          <ul className="tab-list">
+            {contents &&
+              contents.map(({ name }, index) => (
+                <li
+                  key={index}
+                  className={activeTab === index ? "active" : ""}
+                  onClick={() => selectTab(index)}
+                  data-content={name.replace(/\s+/g, "_")}
+                >
+                  {name}
+                </li>
+              ))}
+          </ul>
+        </div>
         <select onChange={(e) => selectTab(e.target.value)}>
           {contents &&
             contents.map(({ name }, index) => (
