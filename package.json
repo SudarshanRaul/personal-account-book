@@ -1,7 +1,7 @@
 {
   "name": "personal-account-book",
-  "version": "0.1.4",
-  "buildDate": "Wed Jan 01 2025 3:02:13 PM",
+  "version": "0.1.5",
+  "buildDate": "Sun Jan 19 2025 11:16:08 PM",
   "private": true,
   "homepage": "/personal-account-book",
   "dependencies": {
@@ -11,7 +11,8 @@
     "prettier": "^3.4.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-scripts": "5.0.1"
+    "react-scripts": "5.0.1",
+    "tesseract.js": "^6.0.0"
   },
   "scripts": {
     "start": "react-scripts start",
