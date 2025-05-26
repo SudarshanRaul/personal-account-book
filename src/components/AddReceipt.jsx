@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import db from "../database/db";
-import Tesseract from "tesseract.js";
 import ReceiptList from "./ReceiptList";
+import {imageToText} from "../utils/imageToData";
+import { formatDateToYYYYMMDD } from "../utils/utils";
 
 const updateAccountBalance = async (accountId, amount, previousBalance) => {
   try {
@@ -16,53 +17,6 @@ const updateAccountBalance = async (accountId, amount, previousBalance) => {
     console.error("Error updating account balance", error);
     return null;
   }
-};
-
-const receiptItem = function(rawText) {
-  this.product = null;
-  this.amount = null;
-  this.rawText = rawText;
-};
-
-receiptItem.prototype.isItem = function(product) {
-
-};
-
-receiptItem.prototype.getData = function() {
-  const regex = /\b\d+\.\d{2}\b/;
-  const match = this.rawText.match(regex);
-  if (match) {
-    const amount = parseFloat(match[0]);
-    console.log(amount);
-  }
-};
-
-const textToData = (text) => {
-  text = `
-2X Member 111826278335
-E 673919 FF BS BREAST 23.99 E
-E 33561 KS DICED TOM 6.49 E
-E 967596 JACKORGSALSA 2.9TE
-384.29
-EH 878137 18CT EGGS 12.87 E
-E 77053 GRAPE TOMATO 6.29 E
-404609 ECO HALF PAN 6.49 A
-E 55992 GRND TURKEY 18.47 E
-£ 263423 CHPD ONION 3.59 E
-[SME 22101 MONT JACK 2% 4.45 E
-`;
-  const textArray = text.split("\n");
-  console.log(textArray);
-  const output = textArray.map((line) => new receiptItem(line));
-  console.log(output);
-};
-
-const convertToText = async (image) => {
-  const worker = await Tesseract.createWorker('eng');
-  const { data: { text } } = await worker.recognize(image);
-  console.log(text);
-  await worker.terminate();
-  textToData(text);
 };
 
 const addReceipt = async ({
@@ -101,6 +55,7 @@ const AddReceipt = () => {
   const [amount, setAmount] = useState();
   const [categoryId, setCategoryId] = useState();
   const [receipt, setReceipt] = useState(null);
+  const fileInputRef = useRef(null);
 
   const categories = useLiveQuery(() => db.categories.toArray(), []);
   const accounts = useLiveQuery(() => db.accounts.toArray(), []);
@@ -120,6 +75,7 @@ const AddReceipt = () => {
     reader.onloadend = () => {
       const base64String = reader.result;
       setReceipt(base64String);
+      getDataFromImage(base64String);
     };
 
     if (file) {
@@ -142,10 +98,28 @@ const AddReceipt = () => {
     }
   };
 
+  const getDataFromImage = async (image) => {
+    const data = await imageToText(image);
+    setAmount(data.total);
+    setDate(formatDateToYYYYMMDD(data.date));
+  };
+
+  const handleImageClick = () => {
+    /**TODO: fix image change */
+    // fileInputRef.current.click();
+  };
+
   return (
     <div>
       <form className="add-receipt-form">
         <div className="grid-col-1fr-3fr padding-10">
+          <label>Image:</label>
+          {receipt ? (
+              <img src={receipt} alt="Receipt" onClick={handleImageClick} />
+          ) : (
+            <input type="file" onChange={handleFileChange} ref={fileInputRef} />
+          )}
+          
           <label>Date:</label>
           <input
             type="date"
@@ -196,22 +170,8 @@ const AddReceipt = () => {
               ))}
           </select>
         </div>
-        <div className="grid-col-1fr-3fr padding-10">
-          <label>Image:</label>
-          {receipt ? (
-            <img src={receipt} alt="Receipt" />
-          ) : (
-            <input type="file" onChange={handleFileChange} />
-          )}
-        </div>
         <button type="submit" onClick={saveReceipt}>
-          Add
-        </button>
-        <button onClick={(e) => {
-          e.preventDefault();
-          convertToText(receipt)
-        }}>
-          Convert
+          Save
         </button>
       </form>
       <ReceiptList />

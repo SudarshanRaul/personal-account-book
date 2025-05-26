@@ -10,12 +10,13 @@ import AddTransactions from "./components/AddTransactions";
 import Package from "../package.json";
 
 const TabContents = [
-  { name: "Account Dashboard", component: <AccountDashboard /> },
-  { name: "Transactions", component: <Transactions /> },
-  { name: "Summary", component: <Summary /> },
+  { name: "Accounts", component: <AccountDashboard /> },
+  // TODO: Fix transactions, summary
+  // { name: "Transactions", component: <Transactions /> },
+  // { name: "Summary", component: <Summary /> },
   { name: "Add Receipt", component: <AddReceipt /> },
   { name: "Categories", component: <Categories /> },
-  { name: "Add Transactions", component: <AddTransactions /> },
+  // { name: "Add Transactions", component: <AddTransactions /> },
 ];
 
 function App() {

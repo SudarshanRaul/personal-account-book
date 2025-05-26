@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import db from "../database/db";
 import { useLiveQuery } from "dexie-react-hooks";
 
@@ -16,8 +16,21 @@ const addAccount = async (
     return null;
   }
 };
+
+const updateAccountBalance = async (key, newValue) => {
+  try {
+    await db.accounts.put(key, newValue);
+    return true;
+  } catch (error) {
+    console.error("Error updating account balance", error);
+    return null;
+  }
+};
+
 const AccountDashboard = () => {
   const accounts = useLiveQuery(() => db.accounts.toArray(), []);
+  const [editedBalance, setEditedBalance] = useState();
+  const [editModeIndex, setEditModeIndex] = useState();
 
   const getColor = (change) => {
     return change < 0 ? "red" : "green";
@@ -49,6 +62,25 @@ const AccountDashboard = () => {
     return 0;
   };
 
+  const changeAccountBalance = (index, value) => {
+    updateAccountBalance(index, {
+      ...accounts[index],
+      previousBalance: accounts[index].currentBalance,
+      currentBalance: `${value}`,
+    });
+  };
+
+  const enabledEditing = (index) => {
+    setEditedBalance(accounts[index].currentBalance);
+    setEditModeIndex(index);
+  };
+
+  const saveEditedBalance = (index) => {
+    changeAccountBalance(index, editedBalance);
+    setEditedBalance(null);
+    setEditModeIndex(null);
+  };
+
   return (
     <div>
       <div className="grid-col-1fr-1fr padding-10 text-bold border-bottom">
@@ -67,13 +99,33 @@ const AccountDashboard = () => {
           <div key={index} className="grid-col-1fr-1fr padding-10">
             <div>{account.name}</div>
             <div>
-              {account.currentBalance}
-              &nbsp;
-              <span
-                className={`amount-change text-${getColor(getBalanceChange(account))}`}
-              >
-                {getBalanceChange(account)}
-              </span>
+              {editModeIndex === index ? (
+                <>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={editedBalance}
+                    onChange={(e) => setEditedBalance(e.target.value)}
+                  />
+                  <button onClick={() => saveEditedBalance(index)} className="link-button">
+                    <span className="text-bold">✔</span>
+                  </button>
+                </>
+              ) : (
+              <>
+                <button onClick={() => enabledEditing(index)} className="link-button">
+                  <span className="text-bold">✎</span>
+                </button>
+                &nbsp;
+                {account.currentBalance}
+                &nbsp;
+                <span
+                  className={`amount-change text-${getColor(getBalanceChange(account))}`}
+                >
+                  {getBalanceChange(account)}
+                </span>
+              </>
+              )}
             </div>
           </div>
         ))}
