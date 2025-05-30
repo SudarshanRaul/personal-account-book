@@ -1,9 +1,7 @@
 import React from 'react';
-import db from "../database/db";
-import { useLiveQuery } from "dexie-react-hooks";
 
 const ReceiptList = () => {
-    const receipts = useLiveQuery(() => db.receipt.toArray(), []);
+    const receipts = [];
 
     return (
         <div>

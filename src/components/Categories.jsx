@@ -1,37 +1,33 @@
-import React, { useState } from "react";
-import { useLiveQuery } from "dexie-react-hooks";
-import db from "../database/db";
-
-const addCategories = async (
-  { name, groupId } = { name: "", groupId: "-1" },
-) => {
-  try {
-    const id = await db.categories.add({
-      name,
-      groupId,
-    });
-    return id;
-  } catch (error) {
-    console.error("Error adding categories", error);
-    return null;
-  }
-};
-
+import React, { useState, useEffect } from "react";
+import { DB_CONST, addData, getAllData } from "../database/db";
 const Categories = () => {
   const [newCategory, setNewCategory] = useState("");
-  // const [newGroupId, setNewGroupId] = useState('-1');
-  const categories = useLiveQuery(() => db.categories.toArray(), []);
+  const [categories, setNewCategories] = useState([]);
 
   const handleInputChange = (e) => {
     setNewCategory(e.target.value);
   };
 
-  const handleAddCategory = () => {
+  const handleAddCategory = async () => {
     if (newCategory.trim() !== "") {
-      addCategories({ name: newCategory });
+      await addData(DB_CONST.CATEGORIES_DB, {
+        name: newCategory.trim()
+      });
       setNewCategory("");
+      fetchCategories();
+    } else {
+      alert("Please enter a valid category name.");
     }
   };
+
+  const fetchCategories = async () => {
+    const data = await getAllData(DB_CONST.CATEGORIES_DB);
+    setNewCategories(data);
+  };
+
+  useEffect(()=>{
+    fetchCategories();
+  },[]);
 
   return (
     <div>

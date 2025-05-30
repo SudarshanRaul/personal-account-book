@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
-import db from "../database/db";
 
 const addTransactions = async (transactionData) => {
   try {
-    const ids = await db.transactions.bulkAdd(transactionData);
-    return ids;
+    // const ids = await db.transactions.bulkAdd(transactionData);
+    // return ids;
   } catch (error) {
     console.error("Error adding transactions", error);
     return null;
@@ -13,9 +12,9 @@ const addTransactions = async (transactionData) => {
 };
 const AddTransactions = () => {
   const [transactions, setTransactions] = useState([]);
-  const categories = useLiveQuery(() => db.categories.toArray(), []);
-  const accounts = useLiveQuery(() => db.accounts.toArray(), []);
-  const transactionsData = useLiveQuery(() => db.transactions.toArray(), []);
+  const categories = [];
+  const accounts = [];
+  const transactionsData = [];
 
   const createEmptyRecords = (num) => {
     const emptyRecords = Array(num)

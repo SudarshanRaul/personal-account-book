@@ -1,18 +1,16 @@
 import React, { useState, useRef } from "react";
-import { useLiveQuery } from "dexie-react-hooks";
-import db from "../database/db";
 import ReceiptList from "./ReceiptList";
 import {imageToText} from "../utils/imageToData";
 import { formatDateToYYYYMMDD } from "../utils/utils";
 
 const updateAccountBalance = async (accountId, amount, previousBalance) => {
   try {
-    const id = await db.accounts.update(parseInt(accountId), {
-      currentBalance: parseFloat(previousBalance) + amount,
-      previousBalance: previousBalance,
-      prevBalanceDate: new Date(),
-    });
-    return id;
+    // const id = await db.accounts.update(parseInt(accountId), {
+    //   currentBalance: parseFloat(previousBalance) + amount,
+    //   previousBalance: previousBalance,
+    //   prevBalanceDate: new Date(),
+    // });
+    // return id;
   } catch (error) {
     console.error("Error updating account balance", error);
     return null;
@@ -29,15 +27,15 @@ const addReceipt = async ({
 }) => {
   try {
     amount = -1 * parseFloat(amount);
-    const id = await db.receipt.add({
-      date,
-      accountId,
-      amount,
-      categoryId,
-      image,
-    });
+    // const id = await db.receipt.add({
+    //   date,
+    //   accountId,
+    //   amount,
+    //   categoryId,
+    //   image,
+    // });
     updateAccountBalance(accountId, amount, currentBalance);
-    return id;
+    // return id;
   } catch (error) {
     console.error("Error adding receipt", error);
     return null;
@@ -57,8 +55,8 @@ const AddReceipt = () => {
   const [receipt, setReceipt] = useState(null);
   const fileInputRef = useRef(null);
 
-  const categories = useLiveQuery(() => db.categories.toArray(), []);
-  const accounts = useLiveQuery(() => db.accounts.toArray(), []);
+  const categories = [];
+  const accounts = [];
 
   const resetForm = () => {
     setDate(formatDate(new Date()));

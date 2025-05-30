@@ -25,12 +25,6 @@ const Tab = ({ contents }) => {
               ))}
           </ul>
         </div>
-        <select onChange={(e) => selectTab(e.target.value)}>
-          {contents &&
-            contents.map(({ name }, index) => (
-              <option value={index}>{name}</option>
-            ))}
-        </select>
       </div>
       <div className="tab-content">{contents[activeTab].component}</div>
     </div>

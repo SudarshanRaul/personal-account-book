@@ -1,20 +1,18 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-app.js";
-import { getFirestore, collection, addDoc, updateDoc, doc } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore.js";
+import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js'
+import { getFirestore, collection, addDoc, updateDoc, doc, getDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore.js";
 
-import Dexie from "dexie";
+export const DB_CONST = {
+  ACCOUNTS_DB: "accounts",
+  CATEGORIES_DB: "categories",
+};
 
-const dbD = new Dexie("accountBookDB");
-dbD.version(1).stores({
-  accounts: "++id, name, currentBalance, previousBalance, prevBalanceDate",
-  categories: "++id, name, groupId",
-  transactions: "++id, accountId, amount, date, categoryId, type",
-  receipt: "++id, accountId, date, amount, categoryId, image",
-});
+const getDbName = (dbName) => {
+  return window.location.hostname === "localhost" ? `${dbName}-dev` : dbName;
+};
 
-
-
-// Your web app's Firebase configuration
+//web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyAPRSjfYZT8pX-SPpOHQS79sRRHn3_0peg",
   authDomain: "https://sudarshan.js.org",
@@ -28,25 +26,55 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// firebase.auth().signInAnonymously()
-//   .then(() => console.log("Signed in!"))
-//   .catch(error => alert(error));
+const auth = getAuth();
+signInAnonymously(auth)
+  .then(() => console.log("Signed in!"))
+  .catch(error => alert(error));
 
-// Example: Add a document
-const docRef = await addDoc(collection(db, "messages123"), {
-  text: "Hello from Firebase! 123",
-  timestamp: Date.now()
-});
+export const addData = async (dbName, data) => {
+  dbName = getDbName(dbName);
+  const docRef = await addDoc(collection(db, (dbName)), {
+    ...data,
+    timestamp: Date.now()
+  });
+  console.log("Data saved with ID: ", docRef.id);
+  return docRef.id;
+};
 
-const updateDocRef = doc(db, "messages123", "BEPEKny4t3RHm73WsDIA")
-// const updateDocResp = updateDocRef && await updateDoc(updateDocRef, {
-//   text: "Hello from Firebase! 456 updated",
-//   timestamp: Date.now()
-// });
+export const updateData = async (dbName, docId, data) => {
+  dbName = getDbName(dbName);
+  const docRef = doc(db, dbName, docId);
+  await updateDoc(docRef, {
+    ...data,
+    timestamp: Date.now()
+  });
+  console.log("Data updated with ID: ", docId);
+  return docId;
+};
 
-// console.log("Document updated with ID: ", updateDocResp.id);
+export const getDataById = async (dbName, docId) => {
+  dbName = getDbName(dbName);
+  const docRef = doc(db, dbName, docId);
+  const docSnap = await getDoc(docRef);
+  
+  if (docSnap.exists()) {
+    console.log("Document data:", docSnap.data());
+    return { id: docId, ...docSnap.data() };
+  } else {
+    console.log("No such document!");
+    return null;
+  }
+};
 
-console.log("Document written with ID: ", docRef.id);
-
-
-export default dbD;
+export const getAllData = async (dbName) => {
+  dbName = getDbName(dbName);
+  const querySnapshot = await getDocs(collection(db, dbName));
+  const data = [];
+  
+  querySnapshot.forEach((doc) => {
+    data.push({ id: doc.id, ...doc.data() });
+  });
+  
+  console.log("All documents in", dbName, ":", data);
+  return data;
+}
